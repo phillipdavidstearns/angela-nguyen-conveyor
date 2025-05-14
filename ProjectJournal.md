@@ -1,11 +1,27 @@
 # Journal Angela Nguyen
 
-## May 13th 3:30p - 
+## May 13th 3:30p - 6:00p + 7:30 - 8:30p (3.5 hrs)
 
-Completed:
+### Completed:
 
 * Checked power supply for PWM. It's not PWM... possibly a simple variable regulated voltage output.
+* Connected bench power supply to Motor Driver Board.
+* Connected Motor to Motor Driver Board
+* Setup basic Arduino PMW test code to verify that the motor can be controlled from a 24V source using the Motor Driver Board controlled by the Arduino.
+* Wired conveyor power supply to Motor Driver board, powered Arduino from VCC (+5V) out, all control connections for forward, reverse, pwm.
+* Setup Github Repo at [https://github.com/phillipdavidstearns/angela-nguyen-conveyor](https://github.com/phillipdavidstearns/angela-nguyen-conveyor)
+* Started Guide
+	* README.md
+	* Wiring Diagram
 
+### ToDo:
+
+* Assemble the conveyor belt and see how the motor+driver+arduino combo runs.
+* Start coding behaviors:
+	* Pause/Stop+Hold
+	* Scroll
+	* Swipe
+	* Markov Chain for direction and actions, etc.
 
 ## May 9th 4:30p - 6:00p (1.5hrs)
 
