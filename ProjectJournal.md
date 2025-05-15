@@ -1,5 +1,19 @@
 # Journal Angela Nguyen
 
+## May 14th 7:00 - 9:00p (2 hrs)
+
+### Completed:
+
+* Rough modeling of gestures:
+	* LOOK - stop and hold
+	* SCROLL - stop, accelerate to a set speed, hold speed, decelerate to stop
+	* SWIPE - stop, accelerate to speed, then decelerate
+
+### ToDo:
+
+* Refine gestures
+* Build Markov Chain to shape how the next gestures is randomly chosen based on the previous gesture.
+
 ## May 13th 3:30p - 6:00p + 7:30 - 8:30p (3.5 hrs)
 
 ### Completed:
