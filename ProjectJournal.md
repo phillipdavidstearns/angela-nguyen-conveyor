@@ -1,5 +1,26 @@
 # Journal Angela Nguyen
 
+## May 27th 1:00 - 3:00p (2 hrs)
+
+### Completed:
+
+* Unexpected erratic motion was observed.
+	* Observed when code was changing directions.
+	* Removed direction changes.
+	* Reviewed logic to make sure variables and pin values were being set when desired and in the correct sequence.
+* Erratic motion resolved. The culprit was:
+
+```
+#define FORWARD 1
+#define REVERSE -1  <---
+```
+
+Apparently you can't use `#define` set negative keyword values...
+
+### ToDo:
+
+* Markov chains!
+
 ## May 14th 7:00 - 9:00p (2 hrs)
 
 ### Completed:
