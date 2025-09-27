@@ -75,21 +75,32 @@ void loop() {
     last_refresh = current_time;
 
     if (action_is_complete) {
-
+      last_action = current_action;
       action_is_complete = false;
-      current_action = random(3);
+
+      switch (last_action) {
+        case LOOK:
+          current_action = random(1000) < 300 ? SCROLL : SWIPE;
+          break;
+        case SCROLL:
+          current_action = random(1000) < 500 ? SCROLL : random(1000) < 250 ? SWIPE : LOOK;
+          break;
+        case SWIPE:
+          current_action = random(1000) < 500 ? SWIPE : random(1000) < 500 ? SCROLL : LOOK;
+          break;
+        default:
+          current_action = random(3);
+          break;
+      }
 
       switch (current_action) {
         case LOOK:
-          Serial.println("Starting LOOK action.");
           initLook();
           break;
         case SCROLL:
-          Serial.println("Starting SCROLL action.");
           initScroll();
           break;
         case SWIPE:
-          Serial.println("Starting SWIPE action.");
           initSwipe();
           break;
       }
@@ -164,9 +175,26 @@ void stopMotor() {
 // LOOK ACTION
 
 void initLook() {
+
   action_start = millis();
   stopMotor();
-  action_duration = random(500, 1500);
+
+  // How long to LOOK based on last_action
+  switch (last_action) {
+    case LOOK:
+      action_duration = random(500, 1500);
+      break;
+    case SCROLL:
+      action_duration = random(500, 1500);
+      break;
+    case SWIPE:
+      action_duration = random(750, 1500);
+      break;
+    default:
+      action_duration = random(500, 2000);
+      break;
+  }
+
   target_speed = 0;
   action_state = HOLD;
 }
@@ -182,9 +210,34 @@ void doLook() {
 // SWIPE ACTION
 
 void initSwipe() {
-  action_duration = random(500, 2000);
-  motor_direction = random(1000) < 125 ? -1 : 1;
-  target_speed = motor_direction * random(200, 255);
+
+  switch (last_action) {
+    case LOOK:
+      action_duration = random(750, 1500);
+      break;
+    case SCROLL:
+      action_duration = random(500, 750);
+      break;
+    case SWIPE:
+      action_duration += random(-250 , 250);
+      action_duration = max(action_duration, 250);
+      break;
+    default:
+      action_duration = random(750, 1750);
+      break;
+  }
+
+  switch (motor_direction) {
+    case 1:
+      motor_direction = random(1000) < 125 ? -1 : 1;
+      break;
+    case -1:
+      motor_direction = random(1000) < 250 ? -1 : 1;
+      break;
+  }
+
+  target_speed = motor_direction * random(200, 215);
+
   drag = 0.5;
   action_state = ACCEL;
 }
@@ -213,9 +266,32 @@ void doSwipe() {
 
 void initScroll() {
 
-  action_duration = random(500, 2000);
-  motor_direction = random(1000) < 125 ? -1 : 1;
-  target_speed = motor_direction * random(200, 255);
+  switch (last_action) {
+    case LOOK:
+      action_duration = random(750, 1500);
+      break;
+    case SCROLL:
+      action_duration += random(-250 , 250);
+      action_duration = max(action_duration, 330);
+      break;
+    case SWIPE:
+      action_duration += random(-250 , 250);
+      break;
+    default:
+      action_duration = random(500, 1500);
+      break;
+  }
+
+  switch (motor_direction) {
+    case 1:
+      motor_direction = random(1000) < 125 ? -1 : 1;
+      break;
+    case -1:
+      motor_direction = random(1000) < 250 ? -1 : 1;
+      break;
+  }
+
+  target_speed = motor_direction * random(150, 200);
   drag = 0.25;
   action_state = ACCEL;
 }
