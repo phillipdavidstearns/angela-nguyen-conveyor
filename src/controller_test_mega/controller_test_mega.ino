@@ -111,7 +111,7 @@ void loop() {
 
   //check if it's time to update motors and actions
   if (current_time - last_refresh >= refresh_interval ) {
-    
+
     for (int i = 0 ; i < CHANNELS; i++) {
       last_refresh = current_time;
 
@@ -122,13 +122,13 @@ void loop() {
         // Markov chain to determine next action
         switch (last_action[i]) {
           case LOOK:
-            current_action[i] = random(1000) < 300 ? SCROLL : SWIPE;
+            current_action[i] = random(1000) < 500 ? SCROLL : SWIPE;
             break;
           case SCROLL:
-            current_action[i] = random(1000) < 500 ? SCROLL : random(1000) < 250 ? SWIPE : LOOK;
+            current_action[i] = random(1000) < 333 ? SCROLL : random(1000) < 250 ? SWIPE : LOOK;
             break;
           case SWIPE:
-            current_action[i] = random(1000) < 500 ? SWIPE : random(1000) < 500 ? SCROLL : LOOK;
+            current_action[i] = random(1000) < 500 ? SWIPE : random(1000) < 333 ? SCROLL : LOOK;
             break;
           default:
             current_action[i] = random(3);
@@ -213,8 +213,11 @@ void set_speed(int _index, int _motor_speed) {
 }
 
 void stopMotor(int _index) {
+  // set the motor speed and targets to 0
   motor_speed[_index] = 0;
   target_speed[_index] = 0;
+
+  // set the corresponding PWM pin to 0
   set_speed(_index, motor_speed[_index]);
 }
 
@@ -224,21 +227,23 @@ void stopMotor(int _index) {
 void initLook(int _index) {
 
   action_start[_index] = millis();
-  stopMotor(_index);
 
   // How long to LOOK based on last_action
   switch (last_action[_index]) {
-    case LOOK:
-      action_duration[_index] = random(500, 1500);
+    case LOOK: // this should never happen...
+      action_duration[_index] = 0;
       break;
     case SCROLL:
-      action_duration[_index] = random(500, 1500);
+      stopMotor(_index);
+      action_duration[_index] = random(500, 1000);
       break;
     case SWIPE:
-      action_duration[_index] = random(750, 1500);
+      if (random(1000) < 750) stopMotor(_index); // stop conveyor dead 75% of the time
+      action_duration[_index] = random(750, 1250);
       break;
     default:
-      action_duration[_index] = random(500, 2000);
+      stopMotor(_index);
+      action_duration[_index] = 1000;
       break;
   }
 
@@ -260,25 +265,25 @@ void initSwipe(int _index) {
 
   switch (last_action[_index]) {
     case LOOK:
-      action_duration[_index] = random(750, 1500);
+      action_duration[_index] = random(750, 1250);
       break;
     case SCROLL:
       action_duration[_index] = random(500, 750);
       break;
     case SWIPE:
       action_duration[_index] += random(-250 , 250);
-      action_duration[_index] = max(action_duration[_index], 250);
+      action_duration[_index] = constrain(action_duration[_index], 250, 1500);
       break;
     default:
-      action_duration[_index] = random(750, 1750);
+      action_duration[_index] = 1000;
       break;
   }
 
   switch (motor_direction[_index]) {
-    case 1:
+    case 1: // forward
       motor_direction[_index] = random(1000) < 125 ? -1 : 1;
       break;
-    case -1:
+    case -1: // reverse
       motor_direction[_index] = random(1000) < 250 ? -1 : 1;
       break;
   }
@@ -318,27 +323,26 @@ void initScroll(int _index) {
       action_duration[_index] = random(750, 1500);
       break;
     case SCROLL:
-      action_duration[_index] += random(-250 , 250);
-      action_duration[_index] = max(action_duration[_index], 330);
+      action_duration[_index] = random(300 , 500);
       break;
     case SWIPE:
-      action_duration[_index] += random(-250 , 250);
+      action_duration[_index] = random(500 , 750);
       break;
     default:
-      action_duration[_index] = random(500, 1500);
+      action_duration[_index] = 1000;
       break;
   }
 
   switch (motor_direction[_index]) {
-    case 1:
+    case 1: // forward
       motor_direction[_index] = random(1000) < 125 ? -1 : 1;
       break;
-    case -1:
+    case -1: // reverse
       motor_direction[_index] = random(1000) < 250 ? -1 : 1;
       break;
   }
 
-  target_speed[_index] = motor_direction[_index] * random(100, 150);
+  target_speed[_index] = motor_direction[_index] * random(150, 175);
   drag[_index] = 0.25;
   action_state[_index] = ACCEL;
 }
